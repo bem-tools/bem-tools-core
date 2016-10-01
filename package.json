@@ -1,0 +1,25 @@
+{
+  "name": "bem-tools-core",
+  "version": "0.0.1",
+  "description": "bem-tools-core is a CLI runner for its plugins",
+  "main": "index.js",
+  "bin": {
+    "bem": "./bin/bem"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "bem",
+    "bem tools",
+    "bem plugin",
+    "БЭМ"
+  ],
+  "license": "MPL-2.0",
+  "dependencies": {
+    "coa": "^1.0.1",
+    "lodash.uniq": "^4.2.1",
+    "npmls": "^3.0.0",
+    "global-modules": "^0.2.0"
+  }
+}
