@@ -37,7 +37,7 @@ try {
 }
 
 var plugins = uniq(localModules.concat(globalModules).filter(function(module) {
-    return module.indexOf(PLUGIN_PREFIX) === 0;
+    return module.indexOf(PLUGIN_PREFIX) === 0 && module !== 'bem-tools-core';
 }));
 
 plugins.forEach(function(plugin) {
@@ -49,7 +49,8 @@ plugins.forEach(function(plugin) {
     try {
         pluginModule = require(pluginPath);
     } catch(err) {
-        throw new Error('Cannot find module', plugin);
+        // TODO: implement verbose logging
+        // console.warn('Cannot find module', plugin);
     }
 
     pluginModule && bem.cmd().name(commandName).apply(pluginModule).end();
