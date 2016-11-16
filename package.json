@@ -1,6 +1,6 @@
 {
   "name": "bem-tools-core",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "bem-tools-core is a CLI runner for its plugins",
   "main": "index.js",
   "bin": {
