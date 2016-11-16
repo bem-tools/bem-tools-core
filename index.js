@@ -2,9 +2,8 @@ var PLUGIN_PREFIX = 'bem-tools-';
 
 var fs = require('fs'),
     path = require('path'),
-    npmls = require('npmls'),
     npmRootPath = require('global-modules'),
-    uniq = require('lodash.uniq');
+    cwd = process.cwd();
 
 var bem = require('coa').Cmd()
     .name(process.argv[1])
@@ -21,47 +20,54 @@ var bem = require('coa').Cmd()
         })
         .end();
 
-var globalModules = [],
-    localModules = [];
+function readDir(dir) {
+    return new Promise(function(resolve, reject) {
+        fs.readdir(dir, function(err, packages) {
+            if (err && err.code !== 'ENOENT') return reject(err);
 
-try {
-    globalModules = npmls(true);
-} catch (err) {
-    if (err.code !== 'ENOENT') throw new Error(err);
+            resolve((packages || []).reduce(function(acc, package) {
+                acc[package] = path.resolve(dir, package);
+                return acc;
+            }, {}));
+        });
+    });
 }
 
-try {
-    localModules = npmls();
-} catch (err) {
-    if (err.code !== 'ENOENT') throw new Error(err);
-}
+Promise.all([
+    readDir(path.join(cwd, 'node_modules')),
+    readDir(path.join(cwd, 'node_modules', 'bem-tools', 'node_modules')),
+    readDir(path.join(__dirname, 'node_modules')),
+    readDir(path.join(__dirname, 'node_modules', 'bem-tools', 'node_modules')),
+    readDir(npmRootPath),
+    readDir(path.join(npmRootPath, 'bem-tools', 'node_modules'))
+]).then(function(packagesArray) {
+    var packagesHash = Object.assign.apply(Object, packagesArray.reverse());
+    var packages = Object.keys(packagesHash).filter(function(package) {
+        return package.indexOf(PLUGIN_PREFIX) === 0 && package !== 'bem-tools-core';
+    });
 
-var plugins = uniq(localModules.concat(globalModules).filter(function(module) {
-    return module.indexOf(PLUGIN_PREFIX) === 0 && module !== 'bem-tools-core';
-}));
+    packages.forEach(function(packageName) {
+        var commandName = packageName.replace(PLUGIN_PREFIX, ''),
+            pluginPath = path.join(packagesHash[packageName], 'cli'),
+            pluginModule = null;
+        try {
+            pluginModule = require(pluginPath);
+        } catch(err) {
+            // TODO: implement verbose logging
+            // console.warn('Cannot find module', plugin);
+        }
 
-plugins.forEach(function(plugin) {
-    var commandName = plugin.replace(PLUGIN_PREFIX, ''),
-        localPluginDir = path.join('node_modules', plugin),
-        globalPluginDir = path.join(npmRootPath, plugin);
-        pluginPath = path.resolve(path.join(fs.existsSync(localPluginDir) ? localPluginDir: globalPluginDir, 'cli')),
-        pluginModule = null;
-    try {
-        pluginModule = require(pluginPath);
-    } catch(err) {
-        // TODO: implement verbose logging
-        // console.warn('Cannot find module', plugin);
-    }
+        pluginModule && bem.cmd().name(commandName).apply(pluginModule).end();
+    });
 
-    pluginModule && bem.cmd().name(commandName).apply(pluginModule).end();
-});
+    bem.run(process.argv.slice(2));
+
+}).catch(console.error);
 
 bem.act(function(opts, args) {
     if (!Object.keys(opts).length && !Object.keys(args).length) {
         return this.usage();
     }
 });
-
-bem.run(process.argv.slice(2));
 
 module.exports = bem;
