@@ -9,8 +9,6 @@ Each plugin provides JS API and exports COA command via `cli.js` file to be used
 
 ## Available plugins list
 * [bem-tools-create](https://github.com/bem-contrib/bem-tools-create) — creates blocks, elements and modifiers on file system according to [FS scheme](https://en.bem.info/methodology/filesystem/).
-* [bem-tools-find](https://github.com/bem-contrib/bem-tools-find) — finds BEM entities on FS according to [bem-config](https://github.com/bem-sdk/bem-config) settings.
-* [bem-tools-make](https://github.com/bem-contrib/bem-tools-make) — at the moment it's a proxy to [ENB](https://github.com/enb/enb/) make.
 
 ## List of work-in-progress plugins
 * [bem-tools-init](https://github.com/bem-contrib/bem-tools-init) — to create project stub.
@@ -18,6 +16,8 @@ Each plugin provides JS API and exports COA command via `cli.js` file to be used
 * [bem-tools-rm](https://github.com/bem-contrib/bem-tools-rm) — to remove BEM entities.
 * [bem-tools-mv](https://github.com/bem-contrib/bem-tools-mv) — to rename BEM entities.
 * [bem-tools-hint](https://github.com/bem-contrib/bem-tools-hint) — wrapper for [bemhint](https://github.com/bemhint/bemhint).
+* [bem-tools-find](https://github.com/bem-contrib/bem-tools-find) — finds BEM entities on FS according to [bem-config](https://github.com/bem-sdk/bem-config) settings.
+* [bem-tools-make](https://github.com/bem-contrib/bem-tools-make) — at the moment it's a proxy to [ENB](https://github.com/enb/enb/) make.
 
 ## How to create your own plugin
 1. Plugin should be named with `bem-tools-` prefix.
